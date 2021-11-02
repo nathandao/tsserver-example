@@ -26,11 +26,12 @@ per line (which is the format that tsserver requires).
 * An `"open"` command to tell `tsserver` to open `example.ts`. `tsserver` does
   not send back a `"response"` to this command, but this does trigger two
   `"event"`s.
-* A `"quickinfo"` command to ask for info about the `console` part of
-  `console.log`. `tsserver` sends back a short response. The `"displayString"`
-  portion of the response is `"var console: Console"`, which is exactly the
+* A `"quickinfo"` command to ask for info about the `Props` part of
+  `type Props = {`. `tsserver` sends back a short response. The `"displayString"`
+  portion of the response is `"type Props = {\n    itemId: string;\n    isDisabled: boolean;\n}"`, which is exactly the
   same thing you would see if you opened example.ts in Visual Studio Code and
-  hovered over `console`.
+  hovered over `Props`.
+* Another `"quickinfo"` command to ask for the same info about `interface Human`
 
 ## The output
 
