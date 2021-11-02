@@ -1,3 +1,9 @@
-function x() {
-    console.log(1);
+type Props = {
+  itemId: string;
+  isDisabled: boolean;
+}
+
+interface Human {
+  name: string;
+  age: number;
 }

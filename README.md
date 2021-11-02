@@ -31,14 +31,6 @@ per line (which is the format that tsserver requires).
   portion of the response is `"var console: Console"`, which is exactly the
   same thing you would see if you opened example.ts in Visual Studio Code and
   hovered over `console`.
-* A `"getApplicableRefactors"` command for line two of `example.ts`. The list
-  of responses is the same list you would see if you opened example.ts in
-  Visual Studio Code, selected line two of the file, and clicked on the "Show
-  Fixes" lightbulb.
-* A `"getEditsForRefactor"` command for line two of `example.ts`, asking it
-  what edits are needed to the source code in order to actually apply the
-  "Extract function into global scope" refactor. The response is the same list
-  of edits that Visual Studio Code makes if you apply that refactoring.
 
 ## The output
 
@@ -59,15 +51,23 @@ to the `"open"` command):
   "body": {
     "telemetryEventName": "projectInfo",
     "payload": {
-      "projectId": "a77a57adbab7279c51c83282b074c517",
+      "projectId": "e7543aa21d6fbcd724a9a4c5e881b0828891b4724500633db71f643afadcaf3d",
       "fileStats": {
         "js": 0,
+        "jsSize": 0,
         "jsx": 0,
+        "jsxSize": 0,
         "ts": 1,
+        "tsSize": 110,
         "tsx": 0,
-        "dts": 1
+        "tsxSize": 0,
+        "dts": 5,
+        "dtsSize": 1015410,
+        "deferred": 0,
+        "deferredSize": 0
       },
-      "compilerOptions": {},
+      "compilerOptions": {
+      },
       "typeAcquisition": {
         "enable": false,
         "include": false,
@@ -81,7 +81,7 @@ to the `"open"` command):
       "configFileName": "tsconfig.json",
       "projectType": "configured",
       "languageServiceEnabled": true,
-      "version": "2.6.1"
+      "version": "4.4.4"
     }
   }
 }
@@ -91,14 +91,14 @@ to the `"open"` command):
   "type": "event",
   "event": "configFileDiag",
   "body": {
-    "triggerFile": "/Users/mikemorearty/src/typescript/tsserver-example/example.ts",
-    "configFile": "/Users/mikemorearty/src/typescript/tsserver-example/tsconfig.json",
+    "triggerFile": "~/tsserver-example/example.ts",
+    "configFile": "~/tsserver-example/tsconfig.json",
     "diagnostics": []
   }
 }
 ```
 
-In response to the `"quickinfo"` command, this response comes back:
+In response to the 2 `"quickinfo"` commands, this response comes back:
 
 ```json
 {
@@ -108,101 +108,42 @@ In response to the `"quickinfo"` command, this response comes back:
   "request_seq": 1,
   "success": true,
   "body": {
-    "kind": "var",
-    "kindModifiers": "declare",
+    "kind": "type",
+    "kindModifiers": "",
     "start": {
-      "line": 2,
-      "offset": 5
+      "line": 1,
+      "offset": 6
     },
     "end": {
-      "line": 2,
-      "offset": 12
+      "line": 1,
+      "offset": 11
     },
-    "displayString": "var console: Console",
+    "displayString": "type Props = {\n    itemId: string;\n    isDisabled: boolean;\n}",
+    "documentation": "",
+    "tags": []
+  }
+}
+
+{
+  "seq": 0,
+  "type": "response",
+  "command": "quickinfo",
+  "request_seq": 2,
+  "success": true,
+  "body": {
+    "kind": "interface",
+    "kindModifiers": "",
+    "start": {
+      "line": 6,
+      "offset": 11
+    },
+    "end": {
+      "line": 6,
+      "offset": 16
+    },
+    "displayString": "interface Human",
     "documentation": "",
     "tags": []
   }
 }
 ```
-
-In response to the `"getApplicableRefactors"` command, this response comes back:
-
-```json
-{
-  "seq": 0,
-  "type": "response",
-  "command": "getApplicableRefactors",
-  "request_seq": 2,
-  "success": true,
-  "body": [
-    {
-      "name": "Extract Symbol",
-      "description": "Extract function",
-      "actions": [
-        {
-          "description": "Extract to inner function in function 'x'",
-          "name": "function_scope_0"
-        },
-        {
-          "description": "Extract to function in global scope",
-          "name": "function_scope_1"
-        }
-      ]
-    }
-  ]
-}
-```
-
-In that response, notice that the `"body"` has `"name": "Extract Symbol"`, and
-inside that, one of the `"actions"` has `"name": "function_scope_1"`. If you
-look at `tsserver.input`, you will see both of those in the next command that I
-send, which is `"getEditsForRefactor"`.
-
-In response to the `"getEditsForRefactor"` command, this response comes back:
-
-```json
-{
-  "seq": 0,
-  "type": "response",
-  "command": "getEditsForRefactor",
-  "request_seq": 3,
-  "success": true,
-  "body": {
-    "renameLocation": {
-      "line": 2,
-      "offset": 5
-    },
-    "renameFilename": "/Users/mikemorearty/src/typescript/tsserver-example/example.ts",
-    "edits": [
-      {
-        "fileName": "/Users/mikemorearty/src/typescript/tsserver-example/example.ts",
-        "textChanges": [
-          {
-            "start": {
-              "line": 2,
-              "offset": 5
-            },
-            "end": {
-              "line": 2,
-              "offset": 20
-            },
-            "newText": "newFunction();"
-          },
-          {
-            "start": {
-              "line": 3,
-              "offset": 2
-            },
-            "end": {
-              "line": 3,
-              "offset": 2
-            },
-            "newText": "\n\nfunction newFunction() {\n    console.log(1);\n}\n"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
